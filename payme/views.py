@@ -1,4 +1,7 @@
+
+import decimal
 import json
+
 from django.http import HttpResponse
 from payme.models import Account, Merchant, Product, Transaction
 
@@ -10,8 +13,8 @@ from payme.models import Account, Merchant, Product, Transaction
 
 
 def parse_sms(message):
-    # TODO - return from_number, to_number, decimal of amount
-    pass
+    to_number, amount = message.split()
+    return to_number, decimal.Decimal(amount)
 
 
 def json_response(view_func):
@@ -25,6 +28,17 @@ def home(request):
     return HttpResponse('Bangalore Payments Hackathon')
 
 
+def update_balance(account, amount, action='add'):
+    if action == 'add':
+        account.current_balance += amount
+        message = 'Account credited with %s' % amount
+    elif action == 'sub':
+        account.current_balance -= amount
+        message = 'Account debited with %s' % amount
+    account.save()
+    # TODO: send message to account
+    return account
+
 @json_response
 def make_payment(request):
     from_number = request.GET('from_number')
@@ -34,23 +48,21 @@ def make_payment(request):
     try:
         from_account = Account.objects.get(mobile_number=from_number)
     except Account.DoesNotExist:
-        # TODO: return JSON response not a valid from account
-        pass
+        return {'status': 'error', 'message': 'Account Does Not Exist'}
 
     if from_account.current_balance < amount:
-        # TODO: return JSON response with Message
-        pass
+        return {'status': 'error', 'message': 'Insufficient Funds'}
 
     to_account = Account.objects.get_or_create(mobile_number=to_number)
 
     # TODO - Update from account & to account balance
+    update_balance(to_account, amount, action='sub')
+    update_balance(from_account, amount, action='add')
 
     Transaction.objects.create(from_account=from_account,
                                to_account=to_account,
                                amount=amount)
-
-    # TODO: return success response
-    return {}
+    return {'status': 'success', 'message': 'Transaction Successful'}
 
 
 def get_product_price(request):
@@ -59,14 +71,12 @@ def get_product_price(request):
 
     if not product_id:
         return_data = {'status': 'error', 'response_data': 'Send product id please.'}
-
     else:
         try:
             amount = Product.objects.get(product_id=product_id).amount
             return_data = {'status': 'success', 'response_data': {'product_id': product_id, 'amount': amount}}
         except Exception as e:
             return_data = {'status': 'error', 'response_data': str(e)}
-
     return HttpResponse(json.dumps(return_data))
 
 
@@ -76,12 +86,10 @@ def get_merchant_number(request):
 
     if not merchant_id:
         return_data = {'status': 'error', 'response_data': 'Send merchant id please.'}
-
     else:
         try:
             merchant_mobile = Merchant.objects.get(merchant_id=merchant_id).merchant_mobile
             return_data = {'status': 'success', 'response_data': {'product_id': merchant_mobile, 'amount': merchant_mobile}}
         except Exception as e:
             return_data = {'status': 'error', 'response_data': str(e)}
-
     return HttpResponse(json.dumps(return_data))
