@@ -43,7 +43,7 @@ def update_balance(account, amount, action='add'):
 
 @json_response
 def make_payment(request):
-    from_number = request.GET('from_number') or '9876543210'
+    from_number = request.GET.get('from_number') or '9876543210'
     to_number, amount = parse_sms(request.GET['message'])
 
     from_account = None
@@ -55,11 +55,11 @@ def make_payment(request):
     if from_account.current_balance < amount:
         return {'status': 'error', 'message': 'Insufficient Funds'}
 
-    to_account = Account.objects.get_or_create(mobile_number=to_number)
+    to_account, created = Account.objects.get_or_create(mobile_number=to_number)
 
     # TODO - Update from account & to account balance
-    update_balance(to_account, amount, action='sub')
-    update_balance(from_account, amount, action='add')
+    update_balance(to_account, amount, action='add')
+    update_balance(from_account, amount, action='sub')
 
     Transaction.objects.create(from_account=from_account,
                                to_account=to_account,
