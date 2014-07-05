@@ -1,0 +1,44 @@
+<VirtualHost *:9090>
+    #My site Name
+    ServerName 46.4.64.209
+    ServerName stage.payments.com
+    #Demon process for multiple virtual hosts
+   # WSGIDaemonProcess tfs threads=5
+
+    #Pointing wsgi script to config file
+    WSGIDaemonProcess payments python-path=/var/www/payments:/home/virtualenvs/rtfs/lib/python2.7/site-packages
+    WSGIScriptAlias / /var/www/payments/payments.wsgi
+    WSGIProcessGroup rtfs
+
+    ErrorLog /var/log/apache2/payments.error.log
+    CustomLog /var/log/apache2/payments.access.log common
+
+    #Your static files location
+    Alias /static/admin/ "/home/virtualenvs/rtfs/lib/python2.7/site-packages/django/contrib/admin/media/"
+    Alias /static/ "/var/www/payments/static/"
+
+    <Directory "/home/virtualenvs/rtfs/lib/python2.7/site-packages/django/contrib/admin/media">
+        Order allow,deny
+        Options Indexes
+        Allow from all
+        IndexOptions FancyIndexing
+    </Directory>
+
+    <Location "/media">
+        SetHandler None
+    </Location>
+    <LocationMatch "\.(jpg|gif|png|js|css)$">
+        SetHandler None
+    </LocationMatch>
+    <Directory /var/www/payments> >
+        WSGIProcessGroup 46.4.64.209
+        WSGIProcessGroup stage.payments.com
+        #WSGIProcessGroup stage.taxiforsure.com
+        WSGIApplicationGroup %{GLOBAL}
+        Order deny,allow
+        Allow from all
+    </Directory>
+</VirtualHost>
+
+
+
