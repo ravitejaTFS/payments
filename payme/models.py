@@ -20,7 +20,7 @@ class Transaction(models.Model):
 
 class Merchant(models.Model):
     merchant_id = models.CharField(unique=True, max_length=20)
-    merchant_mobile = models.IntegerField(unique=True, max_length=10)
+    merchant_mobile = models.CharField(unique=True, max_length=10)
     account = models.ForeignKey(Account)
     description = models.TextField()
 
