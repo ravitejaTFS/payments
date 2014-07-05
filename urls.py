@@ -5,11 +5,11 @@ from django.conf.urls.defaults import patterns, include, url
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^product/$', 'get_product_price', name='get_product_price'),
-    url(r'^merchant/$', 'get_merchant_phone_number', name='get_merchant_phone_number'),
-
     # Examples:
     url(r'^$', 'payme.views.home', name='home'),
+    url(r'^product/$', 'payme.views.get_product_price', name='get_product_price'),
+    url(r'^merchant/$', 'payme.views.get_merchant_phone_number', name='get_merchant_phone_number'),
+
     # url(r'^payments/', include('payments.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
