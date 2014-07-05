@@ -7,6 +7,9 @@ class Account(models.Model):
     is_active = models.BooleanField(default=True)
     current_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    def __unicode__(self):
+        return self.mobile_number
+
 
 class Transaction(models.Model):
     from_account = models.ForeignKey(Account, related_name='debits')

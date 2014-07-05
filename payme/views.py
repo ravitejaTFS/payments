@@ -68,6 +68,21 @@ def make_payment(request):
 
 
 @json_response
+def recharge_account(request):
+    mobile_number = request.GET.get('mobile_number')
+    amount = decimal.Decimal(request.GET.get('recharge_amount')) or 10
+
+    try:
+        account = Account.objects.get(mobile_number=mobile_number)
+    except Account.DoesNotExist:
+        return {'status': 'error', 'message': 'Account Does Not Exist'}
+
+    update_balance(account, amount, action='add')
+    # TODO: Write this to Transaction
+    return {'status': 'success', 'message': 'Account recharged'}
+
+
+@json_response
 def get_product_price(request):
     data = request.GET
     product_id = data.get('product_id')

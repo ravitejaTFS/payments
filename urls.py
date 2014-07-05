@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'payme.views.home', name='home'),
     url(r'^make_payment/$', 'payme.views.make_payment', name='make_payment'),
+    url(r'^recharge_account/$', 'payme.views.recharge_account', name='recharge_account'),
     url(r'^product/$', 'payme.views.get_product_price', name='get_product_price'),
     url(r'^merchant/$', 'payme.views.get_merchant_number', name='get_merchant_phone_number'),
 
