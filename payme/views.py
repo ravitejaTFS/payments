@@ -60,3 +60,20 @@ def get_product_price(request):
             return_data = {'status': 'error', 'response_data': str(e)}
 
     return HttpResponse(json.dumps(return_data))
+
+
+def get_merchant_number(request):
+    data = request.GET
+    merchant_id = data.get('merchant_id')
+
+    if not merchant_id:
+        return_data = {'status': 'error', 'response_data': 'Send merchant id please.'}
+
+    else:
+        try:
+            merchant_mobile = Merchant.objects.get(merchant_id=merchant_id).merchant_mobile
+            return_data = {'status': 'success', 'response_data': {'product_id': merchant_mobile, 'amount': merchant_mobile}}
+        except Exception as e:
+            return_data = {'status': 'error', 'response_data': str(e)}
+
+    return HttpResponse(json.dumps(return_data))

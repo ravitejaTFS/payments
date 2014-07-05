@@ -8,7 +8,7 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'payme.views.home', name='home'),
     url(r'^product/$', 'payme.views.get_product_price', name='get_product_price'),
-    url(r'^merchant/$', 'payme.views.get_merchant_phone_number', name='get_merchant_phone_number'),
+    url(r'^merchant/$', 'payme.views.get_merchant_number', name='get_merchant_phone_number'),
 
     # url(r'^payments/', include('payments.foo.urls')),
 
