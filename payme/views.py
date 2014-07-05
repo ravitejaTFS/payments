@@ -43,7 +43,7 @@ def update_balance(account, amount, action='add'):
 
 @json_response
 def make_payment(request):
-    from_number = request.GET('from_number')
+    from_number = request.GET('from_number') or '9876543210'
     to_number, amount = parse_sms(request.GET['message'])
 
     from_account = None
