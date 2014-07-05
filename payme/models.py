@@ -4,8 +4,8 @@ from django.db import models
 
 class Account(models.Model):
     mobile_number = models.CharField(max_length=10)
-    is_active = models.BooleanField()
-    current_balance = models.DecimalField(max_digits=10, decimal_places=2)
+    is_active = models.BooleanField(default=True)
+    current_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
 
 class Transaction(models.Model):
