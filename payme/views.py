@@ -1,8 +1,9 @@
 
 import decimal
-import json
 
 from django.http import HttpResponse
+from django.utils import simplejson
+
 from payme.models import Account, Merchant, Product, Transaction
 
 
@@ -20,7 +21,7 @@ def parse_sms(message):
 def json_response(view_func):
     def inner(request, *args, **kwargs):
         payload = view_func(request, *args, **kwargs)
-        return HttpResponse(simplejson.dumps(payload))
+        return HttpResponse(simplejson.dumps(payload, use_decimal=True))
     return inner
 
 
@@ -38,6 +39,7 @@ def update_balance(account, amount, action='add'):
     account.save()
     # TODO: send message to account
     return account
+
 
 @json_response
 def make_payment(request):
@@ -65,6 +67,7 @@ def make_payment(request):
     return {'status': 'success', 'message': 'Transaction Successful'}
 
 
+@json_response
 def get_product_price(request):
     data = request.GET
     product_id = data.get('product_id')
@@ -77,9 +80,10 @@ def get_product_price(request):
             return_data = {'product_id': product_id, 'amount': amount}
         except Exception as e:
             return_data = {'status': 'error', 'response_data': str(e)}
-    return HttpResponse(json.dumps(return_data))
+    return return_data
 
 
+@json_response
 def get_merchant_number(request):
     data = request.GET
     merchant_id = data.get('merchant_id')
@@ -92,4 +96,4 @@ def get_merchant_number(request):
             return_data = {'merchant_id': merchant_id, 'merchant_mobile': merchant_mobile}
         except Exception as e:
             return_data = {'status': 'error', 'response_data': str(e)}
-    return HttpResponse(json.dumps(return_data))
+    return return_data
