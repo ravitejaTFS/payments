@@ -55,7 +55,7 @@ def get_product_price(request):
     else:
         try:
             amount = Product.objects.get(product_id=product_id).amount
-            return_data = {'status': 'success', 'response_data': {'product_id': product_id, 'amount': amount}}
+            return_data = {'product_id': product_id, 'amount': amount}
         except Exception as e:
             return_data = {'status': 'error', 'response_data': str(e)}
 
@@ -72,7 +72,7 @@ def get_merchant_number(request):
     else:
         try:
             merchant_mobile = Merchant.objects.get(merchant_id=merchant_id).merchant_mobile
-            return_data = {'status': 'success', 'response_data': {'product_id': merchant_mobile, 'amount': merchant_mobile}}
+            return_data = {'merchant_id': merchant_id, 'merchant_mobile': merchant_mobile}
         except Exception as e:
             return_data = {'status': 'error', 'response_data': str(e)}
 
