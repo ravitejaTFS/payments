@@ -1,6 +1,6 @@
-
+import json
 from django.http import HttpResponse
-from payme.models import Account, Transaction
+from payme.models import Account, Merchant, Product, Transaction
 
 
 '''
@@ -43,3 +43,20 @@ def make_payment(request):
 
     # TODO: return success response
     return {}
+
+
+def get_product_price(request):
+    data = request.GET
+    product_id = data.get('product_id')
+
+    if not product_id:
+        return_data = {'status': 'error', 'response_data': 'Send product id please.'}
+
+    else:
+        try:
+            amount = Product.objects.get(product_id=product_id).amount
+            return_data = {'status': 'success', 'response_data': {'product_id': product_id, 'amount': amount}}
+        except Exception as e:
+            return_data = {'status': 'error', 'response_data': str(e)}
+
+    return HttpResponse(json.dumps(return_data))
