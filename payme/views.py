@@ -76,8 +76,8 @@ def get_product_price(request):
         return_data = {'status': 'error', 'response_data': 'Send product id please.'}
     else:
         try:
-            amount = Product.objects.get(product_id=product_id).amount
-            return_data = {'product_id': product_id, 'amount': amount}
+            p = Product.objects.get(product_id=product_id)
+            return_data = {'product_id': p.product_id, 'amount': p.amount, 'description': p.description }
         except Exception as e:
             return_data = {'status': 'error', 'response_data': str(e)}
     return return_data
