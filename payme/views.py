@@ -14,10 +14,18 @@ def parse_sms(message):
     pass
 
 
+def json_response(view_func):
+    def inner(request, *args, **kwargs):
+        payload = view_func(request, *args, **kwargs)
+        return HttpResponse(simplejson.dumps(payload))
+    return inner
+
+
 def home(request):
     return HttpResponse('Bangalore Payments Hackathon')
 
 
+@json_response
 def make_payment(request):
     from_number = request.GET('from_number')
     to_number, amount = parse_sms(request.GET['message'])
